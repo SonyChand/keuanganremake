@@ -67,11 +67,11 @@
             <?php foreach ($data1 as $row) : ?>
                 <tr>
                     <th scope="row"><?= $i++ ?></th>
-                    <td><?= date('d-m-Y', $row->tanggal) ?></td>
+                    <td><?= tanggal_indonesia(date('Y-m-d', $row->tanggal)) ?></td>
                     <td><?= $row->pengguna_nama ?></td>
                     <td><?= $row->keterangan ?></td>
-                    <td><?= number_format($row->debet, 2) ?></td>
-                    <td><?= number_format($row->kredit, 2) ?></td>
+                    <td><?= number_format($row->debet, 0, ',', '.') ?></td>
+                    <td><?= number_format($row->kredit, 0, ',', '.') ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
