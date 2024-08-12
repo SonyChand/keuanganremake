@@ -72,13 +72,13 @@
                                         } elseif ($oneData->role == 2) {
                                             echo "Keuangan";
                                         } else {
-                                            echo "Ustadz";
+                                            echo "Yayasan";
                                         }
                                         ?>
                                     </option>
                                     <option value="1">Admin</option>
                                     <option value="2">Keuangan</option>
-                                    <option value="3">Ustadz</option>
+                                    <option value="3">Yayasan</option>
                                 </select>
                                 <?= form_error('role', '<small class="text-danger">', '</small>'); ?>
                             </div>

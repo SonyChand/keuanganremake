@@ -28,7 +28,6 @@
                 <div class="card">
                     <div class="card-header"><?= $title ?></div>
                     <div class="card-body">
-
                         <!-- Multi Columns Form -->
                         <form class="row g-3" method="post">
                             <input type="hidden" name="id" value="<?= $oneData->id ?>">
@@ -59,8 +58,8 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="id_musyrif" class="form-label">Asrama</label>
-                                <select id="id_musyrif" class="form-select" name="id_musyrif" required>
-                                    <option value="<?= $oneData->id_musyrif ?>" hidden>
+                                <select id="id_musyrif" class="form-select" name="id_asrama" required>
+                                    <option value="<?= $oneData->id_asrama ?>" hidden>
                                         <?= $oneData->asrama ?>
                                     </option>
                                     <?php foreach ($dataMod as $row) : ?>

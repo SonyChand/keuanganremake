@@ -167,4 +167,185 @@ class Output extends CI_Controller
     {
         $this->pdfgenerator->generate($html, $filename, $paper, $orientation);
     }
+
+    public function dataPemasukan()
+    {
+        // Ambil data pemasukan dari database
+        $data = [
+            'user' => $this->db->get_where('pengguna', ['email' => $this->session->userdata('email')])->row(),
+            'title' => 'Laporan Pemasukan',
+            'data1' => $this->db->get('pemasukan')->result(),
+            'start_date' => strtotime('2024-01-01'), // Ganti dengan tanggal mulai yang sesuai
+            'end_date' => strtotime('2024-12-31'),   // Ganti dengan tanggal akhir yang sesuai
+            'totalJumlah' => $this->db->select_sum('jumlah')->get('pemasukan')->row()->jumlah
+        ];
+
+        // Nama file PDF
+        $file_pdf = strtolower($data['title']);
+        // Kertas dan orientasi
+        $paper = 'A4';
+        $orientation = 'Portrait';
+        // Load view dan render HTML
+        $html = $this->load->view('output/pemasukan/data', $data, true);
+
+        // Panggil fungsi untuk mencetak PDF
+        $this->print($html, $file_pdf, $paper, $orientation);
+    }
+
+    public function dataPengeluaran()
+    {
+        // Ambil data pengeluaran dari database
+        $data = [
+            'user' => $this->db->get_where('pengguna', ['email' => $this->session->userdata('email')])->row(),
+            'title' => 'Laporan Pengeluaran',
+            'data1' => $this->db->get('pengeluaran')->result(),
+            'start_date' => strtotime('2024-01-01'), // Ganti dengan tanggal mulai yang sesuai
+            'end_date' => strtotime('2024-12-31'),   // Ganti dengan tanggal akhir yang sesuai
+            'totalJumlah' => $this->db->select_sum('jumlah')->get('pengeluaran')->row()->jumlah
+        ];
+
+        // Nama file PDF
+        $file_pdf = strtolower($data['title']);
+        // Kertas dan orientasi
+        $paper = 'A4';
+        $orientation = 'Portrait';
+        // Load view dan render HTML
+        $html = $this->load->view('output/pengeluaran/data', $data, true);
+
+        // Panggil fungsi untuk mencetak PDF
+        $this->print($html, $file_pdf, $paper, $orientation);
+    }
+
+    public function dataPembukuan()
+    {
+        // Ambil data pemasukan dan pengeluaran dari database
+        $data = [
+            'user' => $this->db->get_where('pengguna', ['email' => $this->session->userdata('email')])->row(),
+            'title' => 'Laporan Pembukuan',
+            'pemasukan' => $this->db->get('pemasukan')->result(),
+            'pengeluaran' => $this->db->get('pengeluaran')->result(),
+            'start_date' => strtotime('2024-01-01'), // Ganti dengan tanggal mulai yang sesuai
+            'end_date' => strtotime('2024-12-31'),   // Ganti dengan tanggal akhir yang sesuai
+            'totalPemasukan' => $this->db->select_sum('jumlah')->get('pemasukan')->row()->jumlah,
+            'totalPengeluaran' => $this->db->select_sum('jumlah')->get('pengeluaran')->row()->jumlah,
+            'netto' => $this->db->select_sum('jumlah')->get('pemasukan')->row()->jumlah -
+                $this->db->select_sum('jumlah')->get('pengeluaran')->row()->jumlah
+        ];
+
+        // Nama file PDF
+        $file_pdf = strtolower($data['title']);
+        // Kertas dan orientasi
+        $paper = 'A4';
+        $orientation = 'Portrait';
+        // Load view dan render HTML
+        $html = $this->load->view('output/pembukuan/data', $data, true);
+
+        // Panggil fungsi untuk mencetak PDF
+        $this->print($html, $file_pdf, $paper, $orientation);
+    }
+
+    public function dataSantri()
+    {
+        // Ambil data santri dari database dengan join ke table asrama
+        $data = [
+            'user' => $this->db->get_where('pengguna', ['email' => $this->session->userdata('email')])->row(),
+            'title' => 'Laporan Santri',
+            'data1' => $this->db->select('santri.nama, santri.tgl_lahir, santri.jk, asrama.nama as nama_asrama')
+                ->join('asrama', 'santri.id_asrama = asrama.id', 'LEFT')
+                ->get('santri')
+                ->result(),
+            'start_date' => strtotime('2024-01-01'), // Ganti dengan tanggal mulai yang sesuai
+            'end_date' => strtotime('2024-12-31')   // Ganti dengan tanggal akhir yang sesuai
+        ];
+
+        // Nama file PDF
+        $file_pdf = strtolower($data['title']);
+        // Kertas dan orientasi
+        $paper = 'A4';
+        $orientation = 'Portrait';
+        // Load view dan render HTML
+        $html = $this->load->view('output/santri/data', $data, true);
+
+        // Panggil fungsi untuk mencetak PDF
+        $this->print($html, $file_pdf, $paper, $orientation);
+    }
+
+    public function dataYayasan()
+    {
+        // Ambil data ustadz dari database dengan join ke table asrama dan pengguna
+        $data = [
+            'user' => $this->db->get_where('pengguna', ['email' => $this->session->userdata('email')])->row(),
+            'title' => 'Laporan Yayasan',
+            'data1' => $this->db->select('ustadz.id_user, ustadz.nama, ustadz.bidang, ustadz.jk, asrama.nama as nama_asrama, pengguna.id as id_pengguna')
+                ->join('asrama', 'ustadz.id_asrama = asrama.id', 'LEFT')
+                ->join('pengguna', 'ustadz.id_user = pengguna.id', 'LEFT')
+                ->get('ustadz')
+                ->result(),
+            'start_date' => strtotime('2024-01-01'), // Ganti dengan tanggal mulai yang sesuai
+            'end_date' => strtotime('2024-12-31')   // Ganti dengan tanggal akhir yang sesuai
+        ];
+
+        // Nama file PDF
+        $file_pdf = strtolower($data['title']);
+        // Kertas dan orientasi
+        $paper = 'A4';
+        $orientation = 'Portrait';
+        // Load view dan render HTML
+        $html = $this->load->view('output/yayasan/data', $data, true);
+
+        // Panggil fungsi untuk mencetak PDF
+        $this->print($html, $file_pdf, $paper, $orientation);
+    }
+
+    public function dataAsrama()
+    {
+        // Ambil data asrama dari database dengan join ke table ustadz
+        $data = [
+            'user' => $this->db->get_where('pengguna', ['email' => $this->session->userdata('email')])->row(),
+            'title' => 'Laporan Asrama',
+            'data1' => $this->db->select('asrama.*, ustadz.nama as musyrif')
+                ->join('ustadz', 'asrama.id_musyrif = ustadz.id', 'LEFT')
+                ->get('asrama')
+                ->result(),
+            'start_date' => strtotime('2024-01-01'), // Ganti dengan tanggal mulai yang sesuai
+            'end_date' => strtotime('2024-12-31')   // Ganti dengan tanggal akhir yang sesuai
+        ];
+
+        // Nama file PDF
+        $file_pdf = strtolower($data['title']);
+        // Kertas dan orientasi
+        $paper = 'A4';
+        $orientation = 'Portrait';
+        // Load view dan render HTML
+        $html = $this->load->view('output/asrama/data', $data, true);
+
+        // Panggil fungsi untuk mencetak PDF
+        $this->print($html, $file_pdf, $paper, $orientation);
+    }
+
+    public function dataJurnal()
+    {
+        // Ambil data jurnal dari database dengan join ke tabel pengguna
+        $data = [
+            'user' => $this->db->get_where('pengguna', ['email' => $this->session->userdata('email')])->row(),
+            'title' => 'Laporan Jurnal Umum',
+            'data1' => $this->db->select('jurnal_umum.*, pengguna.nama as pengguna_nama')
+                ->join('pengguna', 'jurnal_umum.nama_pengguna = pengguna.nama', 'LEFT')
+                ->get('jurnal_umum')
+                ->result(),
+            'start_date' => strtotime('2024-01-01'), // Ganti dengan tanggal mulai yang sesuai
+            'end_date' => strtotime('2024-12-31')   // Ganti dengan tanggal akhir yang sesuai
+        ];
+
+        // Nama file PDF
+        $file_pdf = strtolower($data['title']);
+        // Kertas dan orientasi
+        $paper = 'A4';
+        $orientation = 'Portrait';
+        // Load view dan render HTML
+        $html = $this->load->view('output/jurnal/data', $data, true);
+
+        // Panggil fungsi untuk mencetak PDF
+        $this->print($html, $file_pdf, $paper, $orientation);
+    }
 }

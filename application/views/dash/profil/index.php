@@ -18,9 +18,9 @@
                 if ($user->role == 1) {
                     $namaRole = 'Admin';
                 } elseif ($user->role == 2) {
-                    $namaRole = 'Advokat';
+                    $namaRole = 'Keuangan';
                 } else {
-                    $namaRole = 'Klien';
+                    $namaRole = 'Yayasan';
                 }
                 ?>
                 <div class="card">
@@ -97,9 +97,9 @@
                                         if ($user->role == 1) {
                                             echo "Admin";
                                         } elseif ($user->role == 2) {
-                                            echo "Advokat";
+                                            echo "Keuangan";
                                         } else {
-                                            echo "Klien";
+                                            echo "Yayasan";
                                         }
                                         ?>
                                     </div>

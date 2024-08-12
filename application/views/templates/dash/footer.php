@@ -4,14 +4,14 @@
             <ul class="nav">
                 <li class="nav-item">
                     <a class="nav-link" href="<?= base_url() ?>">
-                        Rekam Medis
+                        Web Keuangan
                     </a>
                 </li>
             </ul>
         </nav>
         <div class="copyright">
             2024, made with <i class="fa fa-heart heart text-danger"></i> by
-            <a href="<?= base_url() ?>">Kalsi</a>
+            <a href="<?= base_url() ?>">Abah Daud</a>
         </div>
         <div>
             Distributed by

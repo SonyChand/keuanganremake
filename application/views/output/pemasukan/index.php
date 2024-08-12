@@ -20,7 +20,7 @@
         }
 
         .gray {
-            background-color: lightgray
+            background-color: lightgray;
         }
 
         .tabel1 {
@@ -50,7 +50,7 @@
                 <!-- <img src="{{asset('images/meteor-logo.png')}}" alt="" width="150" /> -->
             </td>
             <td align="right">
-                <h3>Web Keuangan</h3>
+                <h3>Web Pemasukan</h3>
                 <pre></pre>
             </td>
         </tr>
@@ -59,10 +59,9 @@
 
     <table width="100%">
         <tr>
-            <td><strong>Dari:</strong> Admin Keuangan</td>
-            <td><strong>Pasien:</strong> <?= $onePas->nama ?></td>
+            <td><strong>Dari:</strong> Admin</td>
+            <td><strong>Periode:</strong> <?= tanggal_indonesia(date('Y-m-d', $start_date)) ?> s/d <?= tanggal_indonesia(date('Y-m-d', $end_date)) ?></td>
         </tr>
-
     </table>
 
     <br />
@@ -71,40 +70,30 @@
         <thead style="background-color: lightgray;">
             <tr>
                 <th style="text-align: center;">#</th>
-                <th style="text-align: center;">Invoice</th>
-                <th style="text-align: center;">Nama Pasien</th>
-                <th style="text-align: center;">NIK</th>
                 <th style="text-align: center;">Tanggal</th>
-                <th style="text-align: center;">Status</th>
-                <th style="text-align: center;">Total</th>
+                <th style="text-align: center;">Sumber</th>
+                <th style="text-align: center;">Jumlah</th>
+                <th style="text-align: center;">Keterangan</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <th scope="row" style="text-align: center;">1</th>
-                <td style="text-align: center;"><?= $onePem->invoice ?></td>
-                <td style="text-align: center;"><?= $onePas->nama ?></td>
-                <td style="text-align: center;"><?= $onePas->nik ?></td>
-                <td style="text-align: center;"><?= tanggal_indonesia(date('Y-m-d', $onePem->tgl_dibuat)) ?> <?= date('H:i:s', $onePem->tgl_dibuat) ?></td>
-                <td style="text-align: center;">
-                    <?php
-                    if ($onePem->status == 0) {
-                        echo 'Belum Bayar';
-                    } else {
-                        echo 'Sudah Bayar';
-                    }
-                    ?>
-                </td>
-                <td style="text-align: right;">
-                    <?= number_format($onePem->nominal, 0, ',', '.') ?>
-                </td>
-            </tr>
+            <?php $i = 1;
+            foreach ($data1 as $row) : ?>
+                <tr>
+                    <th scope="row" style="text-align: center;"><?= $i++ ?></th>
+                    <td style="text-align: center;"><?= tanggal_indonesia(date('Y-m-d', $row->tanggal)) ?> <?= date('H:i:s', $row->tanggal) ?></td>
+                    <td style="text-align: center;"><?= $row->sumber ?></td>
+                    <td style="text-align: right;"><?= number_format($row->jumlah, 2) ?></td>
+                    <td style="text-align: left;"><?= $row->keterangan ?></td>
+                </tr>
+            <?php endforeach; ?>
         </tbody>
 
         <tfoot>
             <tr>
-                <td colspan="6" style="text-align: right;">Total</td>
-                <td style="text-align: end;" class="gray"><?= money($onePem->nominal) ?></td>
+                <td colspan="3" style="text-align: right;">Total</td>
+                <td style="text-align: right;" class="gray"><?= number_format($totalJumlah, 2) ?></td>
+                <td></td>
             </tr>
         </tfoot>
     </table>

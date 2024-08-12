@@ -127,6 +127,7 @@ class Admin extends CI_Controller
 	}
 
 
+
 	public function santri()
 	{
 		$data = [
@@ -210,11 +211,11 @@ class Admin extends CI_Controller
 		redirect('admin/santri');
 	}
 
-	public function ustadz()
+	public function yayasan()
 	{
 		$data = [
 			'user' => $this->db->get_where('pengguna', ['email' => $this->session->userdata('email')])->row(),
-			'title' => 'Ustadz',
+			'title' => 'Yayasan',
 			'dataTab' => $this->db->select('ustadz.*, asrama.nama as asrama, pengguna.email, pengguna.image')->join('asrama', 'ustadz.id_asrama = asrama.id', 'LEFT')->join('pengguna', 'ustadz.id_user = pengguna.id', 'LEFT')->get('ustadz')->result(),
 			'dataMod' => $this->db->get_where('pengguna', ['role' => 3, 'image' => 'default'])->result(),
 			'dataMod2' => $this->db->get('asrama')->result()
@@ -229,7 +230,7 @@ class Admin extends CI_Controller
 		if ($this->form_validation->run() == false) {
 			$this->load->view('templates/dash/header', $data);
 			$this->load->view('templates/dash/sidenav', $data);
-			$this->load->view('admin/ustadz/index', $data);
+			$this->load->view('admin/yayasan/index', $data);
 			$this->load->view('templates/dash/footer');
 		} else {
 			$image = $_FILES['image']['name'];
@@ -284,17 +285,17 @@ class Admin extends CI_Controller
 
 			$this->db->insert('ustadz', $data);
 
-			$this->session->set_flashdata('ustadz', '<div class="alert alert-success">Ustadz baru dengan Nama <strong>' . $data['nama'] . '</strong> berhasil ditambahkan!!</div>');
-			redirect('admin/ustadz');
+			$this->session->set_flashdata('yayasan', '<div class="alert alert-success">Yayasan baru dengan Nama <strong>' . $data['nama'] . '</strong> berhasil ditambahkan!!</div>');
+			redirect('admin/yayasan');
 		}
 	}
 
 
-	public function ubahUstadz($id = '')
+	public function ubahYayasan($id = '')
 	{
 		$data = [
 			'user' => $this->db->get_where('pengguna', ['email' => $this->session->userdata('email')])->row(),
-			'title' => 'Ubah Ustadz',
+			'title' => 'Ubah Yayasan',
 			'oneData' => $this->db->select('ustadz.*, asrama.nama as asrama, pengguna.email, pengguna.image')->join('asrama', 'ustadz.id_asrama = asrama.id', 'LEFT')->join('pengguna', 'ustadz.id_user = pengguna.id', 'LEFT')->get_where('ustadz', ['ustadz.id' => $id])->row(),
 			'dataMod' => $this->db->get_where('pengguna', ['role' => 3, 'image' => 'default'])->result(),
 			'dataMod2' => $this->db->get('asrama')->result()
@@ -311,7 +312,7 @@ class Admin extends CI_Controller
 		if ($this->form_validation->run() == false) {
 			$this->load->view('templates/dash/header', $data);
 			$this->load->view('templates/dash/sidenav', $data);
-			$this->load->view('admin/ustadz/ubah', $data);
+			$this->load->view('admin/yayasan/ubah', $data);
 			$this->load->view('templates/dash/footer');
 		} else {
 
@@ -330,8 +331,8 @@ class Admin extends CI_Controller
             <div class="alert alert-danger alert-dismissible fade show border border-dark" role="alert">
                         <strong>Ukuran Gambar</strong> tidak bisa melebihi <strong>5 MB</strong>
             </div>';
-					$this->session->set_flashdata('ustadz', $isiPesan);
-					redirect('ustadz');
+					$this->session->set_flashdata('yayasan', $isiPesan);
+					redirect('yayasan');
 				}
 
 				$config['file_name'] = time() . '_' . md5(sha1(base64_encode($email))) . time();
@@ -349,7 +350,7 @@ class Admin extends CI_Controller
 					$this->db->where('id', $blabla->id);
 					$this->db->update('pengguna', ['image' => $new_image]);
 				} else {
-					redirect('admin/ustadz');
+					redirect('admin/yayasan');
 				}
 			}
 
@@ -364,19 +365,19 @@ class Admin extends CI_Controller
 			$this->db->update('ustadz', $data);
 
 
-			$this->session->set_flashdata('ustadz', '<div class="alert alert-success">Ustadz dengan Nama <strong>' . $data['nama'] . '</strong> berhasil diubah!!</div>');
-			redirect('admin/ustadz');
+			$this->session->set_flashdata('yayasan', '<div class="alert alert-success">Ustadz dengan Nama <strong>' . $data['nama'] . '</strong> berhasil diubah!!</div>');
+			redirect('admin/yayasan');
 		}
 	}
 
-	public function hapusUstadz($id)
+	public function hapusYayasan($id)
 	{
 		$data = $this->db->get_where('ustadz', ['id' => $id])->row();
 
 		$this->db->delete('ustadz', ['id' => $id]);
 
 		$this->session->set_flashdata('ustadz', '<div class="alert alert-warning">Data Ustadz dengan Nama <strong>' . $data->nama . '</strong> berhasil dihapus!!</div>');
-		redirect('admin/ustadz');
+		redirect('admin/yayasan');
 	}
 
 	public function asrama()
