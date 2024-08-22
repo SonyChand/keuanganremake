@@ -329,7 +329,7 @@ class Output extends CI_Controller
         $this->print($html, $file_pdf, $paper, $orientation);
     }
 
-    public function predict_expenses()
+    private function predict_expenses()
     {
         // Get current month's expenses
         $current_month = date('n'); // current month as an integer

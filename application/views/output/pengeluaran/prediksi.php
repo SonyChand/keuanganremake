@@ -91,7 +91,7 @@
     <table width="100%" class="tabel1">
         <thead>
             <tr>
-                <th style="font-size: x-large;">Prediksi Pengeluaran bulan <?= tanggal_indonesia2(date('Y-m', strtotime('-1 month'))) ?></th>
+                <th style="font-size: x-large;">Prediksi Pengeluaran bulan <?= tanggal_indonesia2(date('Y-m', strtotime('+1 month'))) ?></th>
             </tr>
         </thead>
         <tbody>
