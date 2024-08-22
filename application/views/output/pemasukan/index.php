@@ -50,8 +50,25 @@
                 <!-- <img src="{{asset('images/meteor-logo.png')}}" alt="" width="150" /> -->
             </td>
             <td align="right">
-                <h3>Web Pemasukan</h3>
-                <pre></pre>
+                <h2><?= isset($title) ? $title : 'Laporan Pemasukan' ?></h2>
+                <hr class="line-title">
+                <?php
+                // Debugging: Cek nilai dari $start_date dan $end_date
+                log_message('debug', 'Start Date: ' . print_r($start_date, true));
+                log_message('debug', 'End Date: ' . print_r($end_date, true));
+
+                if (isset($start_date) && isset($end_date) && is_numeric($start_date) && is_numeric($end_date)) {
+                    $start_date_formatted = date('Y-m-d', (int)$start_date);
+                    $end_date_formatted = date('Y-m-d', (int)($end_date - 86400));
+                ?>
+                    <p><strong>Periode: <?= tanggal_indonesia($start_date_formatted) ?> s/d <?= tanggal_indonesia($end_date_formatted) ?></strong></p>
+                <?php
+                } else {
+                ?>
+                    <p><strong>Periode: Semua Data</strong></p>
+                <?php
+                }
+                ?>
             </td>
         </tr>
 

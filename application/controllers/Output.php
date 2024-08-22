@@ -170,51 +170,198 @@ class Output extends CI_Controller
 
     public function dataPemasukan()
     {
-        // Ambil data pemasukan dari database
+        // Ambil data pengguna dan judul
         $data = [
             'user' => $this->db->get_where('pengguna', ['email' => $this->session->userdata('email')])->row(),
-            'title' => 'Laporan Pemasukan',
-            'data1' => $this->db->get('pemasukan')->result(),
-            'start_date' => strtotime('2024-01-01'), // Ganti dengan tanggal mulai yang sesuai
-            'end_date' => strtotime('2024-12-31'),   // Ganti dengan tanggal akhir yang sesuai
-            'totalJumlah' => $this->db->select_sum('jumlah')->get('pemasukan')->row()->jumlah
+            'title' => 'Laporan Pemasukan'
         ];
 
+        // Ambil start_date dan end_date dari input form
+        $start_date_input = $this->input->post('start_date');
+        $end_date_input = $this->input->post('end_date');
+
+        // Konversi ke timestamp Unix jika ada input tanggal
+        $start_date = $start_date_input ? strtotime($start_date_input) : null;
+        $end_date = $end_date_input ? strtotime($end_date_input) + 86400 : null; // Tambah satu hari untuk memasukkan tanggal akhir
+
+        // Ambil data pemasukan dalam rentang tanggal atau semua data jika tanggal tidak diinputkan
+        $this->db->select('pemasukan.*, asrama.nama as asrama');
+        $this->db->join('asrama', 'pemasukan.id_asrama = asrama.id', 'LEFT');
+        if ($start_date !== null) {
+            $this->db->where('pemasukan.tanggal_masuk >=', $start_date);
+        }
+        if ($end_date !== null) {
+            $this->db->where('pemasukan.tanggal_masuk <', $end_date);
+        }
+        $this->db->order_by('pemasukan.tanggal_masuk', 'ASC');
+        $data['dataPemasukan'] = $this->db->get('pemasukan')->result();
+
+        // Gabungkan data pemasukan untuk ditampilkan
+        $data['dataTransaksi'] = array_map(function ($item) {
+            return [
+                'tanggal' => $item->tanggal_masuk,
+                'jumlah' => $item->jumlah,
+                'sumber' => $item->sumber,
+                'keterangan' => $item->keterangan,
+                'asrama' => $item->asrama
+            ];
+        }, $data['dataPemasukan']);
+
+        // Sort dataTransaksi by date
+        usort($data['dataTransaksi'], function ($a, $b) {
+            return $a['tanggal'] - $b['tanggal'];
+        });
+
+        // Pass start_date dan end_date untuk ditampilkan di tampilan
+        $data['start_date'] = $start_date_input ? date('Y-m-d', $start_date) : null;
+        $data['end_date'] = $end_date_input ? date('Y-m-d', $end_date - 86400) : null;
+
+        // Hitung total jumlah pemasukan
+        $this->db->select_sum('jumlah');
+        if ($start_date !== null && $end_date !== null) {
+            $this->db->where('tanggal_masuk >=', $start_date)->where('tanggal_masuk <', $end_date);
+        }
+        $data['totalJumlah'] = $this->db->get('pemasukan')->row()->jumlah;
+
         // Nama file PDF
-        $file_pdf = strtolower($data['title']);
-        // Kertas dan orientasi
+        $file_pdf = strtolower(str_replace(' ', '_', $data['title']));
+        // Ukuran kertas dan orientasi
         $paper = 'A4';
         $orientation = 'Portrait';
-        // Load view dan render HTML
+
+        // Muat tampilan dan render HTML
         $html = $this->load->view('output/pemasukan/data', $data, true);
 
         // Panggil fungsi untuk mencetak PDF
         $this->print($html, $file_pdf, $paper, $orientation);
     }
 
+
+
     public function dataPengeluaran()
     {
-        // Ambil data pengeluaran dari database
+        // Ambil data pengguna dan judul
         $data = [
             'user' => $this->db->get_where('pengguna', ['email' => $this->session->userdata('email')])->row(),
-            'title' => 'Laporan Pengeluaran',
-            'data1' => $this->db->get('pengeluaran')->result(),
-            'start_date' => strtotime('2024-01-01'), // Ganti dengan tanggal mulai yang sesuai
-            'end_date' => strtotime('2024-12-31'),   // Ganti dengan tanggal akhir yang sesuai
-            'totalJumlah' => $this->db->select_sum('jumlah')->get('pengeluaran')->row()->jumlah
+            'title' => 'Laporan Pengeluaran'
         ];
 
+        // Ambil start_date dan end_date dari input form
+        $start_date_input = $this->input->post('start_date');
+        $end_date_input = $this->input->post('end_date');
+
+        // Konversi ke timestamp Unix jika ada input tanggal
+        $start_date = $start_date_input ? strtotime($start_date_input) : null;
+        $end_date = $end_date_input ? strtotime($end_date_input) + 86400 : null; // Tambah satu hari untuk memasukkan tanggal akhir
+
+        // Ambil data pengeluaran dalam rentang tanggal atau semua data jika tanggal tidak diinputkan
+        $this->db->select('pengeluaran.*, asrama.nama as asrama');
+        $this->db->join('asrama', 'pengeluaran.id_asrama = asrama.id', 'LEFT');
+        if ($start_date !== null) {
+            $this->db->where('pengeluaran.tanggal_keluar >=', $start_date);
+        }
+        if ($end_date !== null) {
+            $this->db->where('pengeluaran.tanggal_keluar <', $end_date);
+        }
+        $this->db->order_by('pengeluaran.tanggal_keluar', 'ASC');
+        $data['dataPengeluaran'] = $this->db->get('pengeluaran')->result();
+
+        // Gabungkan data pengeluaran untuk ditampilkan
+        $data['dataTransaksi'] = array_map(function ($item) {
+            return [
+                'tanggal' => $item->tanggal_keluar,
+                'jumlah' => $item->jumlah,
+                'kategori' => ucfirst($item->kategori),
+                'keterangan' => $item->keterangan,
+                'asrama' => $item->asrama
+            ];
+        }, $data['dataPengeluaran']);
+
+        // Sort dataTransaksi by date
+        usort($data['dataTransaksi'], function ($a, $b) {
+            return $a['tanggal'] - $b['tanggal'];
+        });
+
+        // Pass start_date dan end_date untuk ditampilkan di tampilan
+        $data['start_date'] = $start_date_input ? date('Y-m-d', $start_date) : null;
+        $data['end_date'] = $end_date_input ? date('Y-m-d', $end_date - 86400) : null;
+
+        // Hitung total jumlah pengeluaran
+        $this->db->select_sum('jumlah');
+        if ($start_date !== null && $end_date !== null) {
+            $this->db->where('tanggal_keluar >=', $start_date)->where('tanggal_keluar <', $end_date);
+        }
+        $data['totalJumlah'] = $this->db->get('pengeluaran')->row()->jumlah;
+
         // Nama file PDF
-        $file_pdf = strtolower($data['title']);
-        // Kertas dan orientasi
+        $file_pdf = strtolower(str_replace(' ', '_', $data['title']));
+        // Ukuran kertas dan orientasi
         $paper = 'A4';
         $orientation = 'Portrait';
-        // Load view dan render HTML
+
+        // Muat tampilan dan render HTML
         $html = $this->load->view('output/pengeluaran/data', $data, true);
 
         // Panggil fungsi untuk mencetak PDF
         $this->print($html, $file_pdf, $paper, $orientation);
     }
+
+    public function prediksiPengeluaran()
+    {
+        // Ambil data pengguna dan judul
+        $data = [
+            'user' => $this->db->get_where('pengguna', ['email' => $this->session->userdata('email')])->row(),
+            'title' => 'Prediksi Pengeluaran',
+            'prediksi' => $this->predict_expenses()
+        ];
+
+
+        // Nama file PDF
+        $file_pdf = strtolower(str_replace(' ', '_', $data['title']));
+        // Ukuran kertas dan orientasi
+        $paper = 'A4';
+        $orientation = 'Portrait';
+
+        // Muat tampilan dan render HTML
+        $html = $this->load->view('output/pengeluaran/prediksi', $data, true);
+
+        // Panggil fungsi untuk mencetak PDF
+        $this->print($html, $file_pdf, $paper, $orientation);
+    }
+
+    public function predict_expenses()
+    {
+        // Get current month's expenses
+        $current_month = date('n'); // current month as an integer
+        $current_month_expenses = $this->db
+            ->select_sum('jumlah')
+            ->where('MONTH(tanggal_keluar)', $current_month)
+            ->get('pengeluaran')
+            ->row()->jumlah;
+
+        // Calculate the average of the last 3 months' expenses
+        $last_three_months = strtotime(date('Y-m-d', strtotime('-3 months'))); // 3 months ago
+        $last_three_months_expenses = $this->db
+            ->select_sum('jumlah')
+            ->where('tanggal_keluar >=', $last_three_months)
+            ->where('tanggal_keluar <=', strtotime(date('Y-m-d')))
+            ->get('pengeluaran')
+            ->result_array();
+
+        $jumlah_values = array_column($last_three_months_expenses, 'jumlah');
+        $average_expenses = array_sum($jumlah_values) / count($jumlah_values);
+
+        // Predict next month's expenses using Exponential Smoothing (alpha = 0.2)
+        $alpha = 0.2;
+        $predicted_expenses = $average_expenses + ($current_month_expenses - $average_expenses) * $alpha;
+
+        // Round the predicted value to 2 decimal places
+        $predicted_expenses = round($predicted_expenses, 2);
+
+        // Return the predicted value
+        return $predicted_expenses;
+    }
+
 
     public function dataPembukuan()
     {
@@ -325,25 +472,210 @@ class Output extends CI_Controller
 
     public function dataJurnal()
     {
-        // Ambil data jurnal dari database dengan join ke tabel pengguna
+        // Ambil data pengguna dan judul
         $data = [
             'user' => $this->db->get_where('pengguna', ['email' => $this->session->userdata('email')])->row(),
-            'title' => 'Laporan Jurnal Umum',
-            'data1' => $this->db->select('jurnal_umum.*, pengguna.nama as pengguna_nama')
-                ->join('pengguna', 'jurnal_umum.nama_pengguna = pengguna.nama', 'LEFT')
-                ->get('jurnal_umum')
-                ->result(),
-            'start_date' => strtotime('2024-01-01'), // Ganti dengan tanggal mulai yang sesuai
-            'end_date' => strtotime('2024-12-31')   // Ganti dengan tanggal akhir yang sesuai
+            'title' => 'Laporan Jurnal Umum'
         ];
 
+        // Ambil start_date dan end_date dari input form
+        $start_date_input = $this->input->post('start_date');
+        $end_date_input = $this->input->post('end_date');
+
+        // Konversi ke timestamp Unix jika ada input tanggal
+        $start_date = $start_date_input ? strtotime($start_date_input) : null;
+        $end_date = $end_date_input ? strtotime($end_date_input) + 86400 : null; // Tambah satu hari untuk memasukkan tanggal akhir
+
+        // Ambil data jurnal dalam rentang tanggal atau semua data jika tanggal tidak diinputkan
+        $this->db->select('*');
+        $this->db->order_by('tanggal', 'ASC');
+        $this->db->from('jurnal_umum');
+        if ($start_date !== null) {
+            $this->db->where('tanggal >=', $start_date);
+        }
+        if ($end_date !== null) {
+            $this->db->where('tanggal <', $end_date);
+        }
+        $data['dataJurnal'] = $this->db->get()->result();
+
+        // Gabungkan data jurnal untuk ditampilkan
+        $data['dataTransaksi'] = array_map(function ($item) {
+            return [
+                'tanggal' => $item->tanggal,
+                'keterangan' => $item->keterangan,
+                'ref' => $item->ref,
+                'debet' => $item->debet,
+                'kredit' => $item->kredit
+            ];
+        }, $data['dataJurnal']);
+
+        // Sort dataTransaksi by date
+        usort($data['dataTransaksi'], function ($a, $b) {
+            return $a['tanggal'] - $b['tanggal'];
+        });
+
+        // Pass start_date dan end_date untuk ditampilkan di tampilan
+        $data['start_date'] = $start_date_input ? date('Y-m-d', $start_date) : null;
+        $data['end_date'] = $end_date_input ? date('Y-m-d', $end_date - 86400) : null;
+
+        // Hitung total debet dan kredit
+        if ($start_date !== null && $end_date !== null) {
+            $this->db->where('tanggal >=', $start_date)->where('tanggal <', $end_date);
+        }
+        $data['total_debet'] = $this->db->select_sum('debet')->get('jurnal_umum')->row()->debet;
+        $data['total_kredit'] = $this->db->select_sum('kredit')->get('jurnal_umum')->row()->kredit;
+
         // Nama file PDF
-        $file_pdf = strtolower($data['title']);
+        $file_pdf = strtolower(str_replace(' ', '_', $data['title']));
+        // Ukuran kertas dan orientasi
+        $paper = 'A4';
+        $orientation = 'Portrait';
+
+        // Muat tampilan dan render HTML
+        $html = $this->load->view('output/jurnal/data', $data, true);
+
+        // Panggil fungsi untuk mencetak PDF
+        $this->print($html, $file_pdf, $paper, $orientation);
+    }
+
+
+
+
+
+    public function dataNeraca()
+    {
+        // Ambil data neraca_saldo dari database dengan join ke table pengguna
+        $data = [
+            'user' => $this->db->get_where('pengguna', ['email' => $this->session->userdata('email')])->row(),
+            'title' => 'Laporan Neraca Saldo',
+            'data1' => $this->db->select('neraca_saldo.*, pengguna.nama as pengguna_nama')
+                ->join('pengguna', 'neraca_saldo.nama_pengguna = pengguna.nama', 'LEFT')
+                ->get('neraca_saldo')
+                ->result(),
+            'start_date' => strtotime('2024-01-01'), // Ganti dengan tanggal mulai yang sesuai
+            'end_date' => strtotime('2024-12-31')    // Ganti dengan tanggal akhir yang sesuai
+        ];
+
+        // Calculate total debit and credit
+        $this->db->select_sum('debit');
+        $total_debit = $this->db->get('neraca_saldo')->row()->debit;
+
+        $this->db->select_sum('kredit');
+        $total_kredit = $this->db->get('neraca_saldo')->row()->kredit;
+
+        // Add total values to data array
+        $data['total_debet'] = $total_debit;
+        $data['total_kredit'] = $total_kredit;
+
+        // Nama file PDF
+        $file_pdf = strtolower(str_replace(' ', '_', $data['title']));
         // Kertas dan orientasi
         $paper = 'A4';
         $orientation = 'Portrait';
         // Load view dan render HTML
-        $html = $this->load->view('output/jurnal/data', $data, true);
+        $html = $this->load->view('output/neraca/data', $data, true);
+
+        // Panggil fungsi untuk mencetak PDF
+        $this->print($html, $file_pdf, $paper, $orientation);
+    }
+
+    public function dataLaporan()
+    {
+        // Ambil data pengguna dan judul
+        $data = [
+            'user' => $this->db->get_where('pengguna', ['email' => $this->session->userdata('email')])->row(),
+            'title' => 'Laporan Keuangan'
+        ];
+
+        // Ambil start_date dan end_date dari input form
+        $start_date_input = $this->input->post('start_date');
+        $end_date_input = $this->input->post('end_date');
+
+        // Konversi ke timestamp Unix jika ada input tanggal
+        $start_date = $start_date_input ? strtotime($start_date_input) : null;
+        $end_date = $end_date_input ? strtotime($end_date_input) + 86400 : null; // Tambah satu hari untuk memasukkan tanggal akhir
+
+        // Ambil data pemasukan dalam rentang tanggal atau semua data jika tanggal tidak diinputkan
+        $this->db->select('pemasukan.*, asrama.nama as asrama');
+        $this->db->join('asrama', 'pemasukan.id_asrama = asrama.id', 'LEFT');
+        if ($start_date !== null) {
+            $this->db->where('pemasukan.tanggal_masuk >=', $start_date);
+        }
+        if ($end_date !== null) {
+            $this->db->where('pemasukan.tanggal_masuk <', $end_date);
+        }
+        $this->db->order_by('pemasukan.tanggal_masuk', 'ASC');
+        $data['dataPemasukan'] = $this->db->get('pemasukan')->result();
+
+        // Ambil data pengeluaran dalam rentang tanggal atau semua data jika tanggal tidak diinputkan
+        $this->db->select('pengeluaran.*, asrama.nama as asrama');
+        $this->db->join('asrama', 'pengeluaran.id_asrama = asrama.id', 'LEFT');
+        if ($start_date !== null) {
+            $this->db->where('pengeluaran.tanggal_keluar >=', $start_date);
+        }
+        if ($end_date !== null) {
+            $this->db->where('pengeluaran.tanggal_keluar <', $end_date);
+        }
+        $this->db->order_by('pengeluaran.tanggal_keluar', 'ASC');
+        $data['dataPengeluaran'] = $this->db->get('pengeluaran')->result();
+
+        // Hitung Saldo Awal
+        $saldoAwalPemasukan = $this->db->select_sum('jumlah')->where('tanggal_masuk <', $start_date ?? time())->get('pemasukan')->row()->jumlah ?? 0;
+        $saldoAwalPengeluaran = $this->db->select_sum('jumlah')->where('tanggal_keluar <', $start_date ?? time())->get('pengeluaran')->row()->jumlah ?? 0;
+        $saldoAwal = $saldoAwalPemasukan - $saldoAwalPengeluaran;
+
+        // Hitung Saldo Akhir
+        $totalPemasukan = array_sum(array_column($data['dataPemasukan'], 'jumlah'));
+        $totalPengeluaran = array_sum(array_column($data['dataPengeluaran'], 'jumlah'));
+        $saldoAkhir = $saldoAwal + $totalPemasukan - $totalPengeluaran;
+
+        // Gabungkan data pemasukan dan pengeluaran untuk ditampilkan
+        $data['dataTransaksi'] = array_merge(
+            array_map(function ($item) {
+                return [
+                    'tanggal' => $item->tanggal_masuk,
+                    'jumlah' => $item->jumlah,
+                    'tipe' => 'pemasukan',
+                    'asrama' => $item->asrama
+                ];
+            }, $data['dataPemasukan']),
+            array_map(function ($item) {
+                return [
+                    'tanggal' => $item->tanggal_keluar,
+                    'jumlah' => $item->jumlah,
+                    'tipe' => 'pengeluaran',
+                    'asrama' => $item->asrama
+                ];
+            }, $data['dataPengeluaran'])
+        );
+
+        // Sort dataTransaksi by date
+        usort($data['dataTransaksi'], function ($a, $b) {
+            return $a['tanggal'] - $b['tanggal'];
+        });
+
+        // Hitung saldo awal dan akhir untuk setiap transaksi
+        $saldoAwal = $this->db->select_sum('jumlah')->get('pemasukan')->row()->jumlah -
+            $this->db->select_sum('jumlah')->get('pengeluaran')->row()->jumlah;
+
+        foreach ($data['dataTransaksi'] as &$transaksi) {
+            $transaksi['saldo_awal'] = $saldoAwal;
+            $saldoAwal += ($transaksi['tipe'] === 'pemasukan' ? $transaksi['jumlah'] : -$transaksi['jumlah']);
+            $transaksi['saldo_akhir'] = $saldoAwal;
+        }
+
+        // Pass start_date dan end_date untuk ditampilkan di tampilan
+        $data['start_date'] = $start_date_input ? date('Y-m-d', $start_date) : 'Semua';
+        $data['end_date'] = $end_date_input ? date('Y-m-d', $end_date - 86400) : 'Semua'; // Kurangi satu hari untuk mencocokkan tanggal akhir
+
+        // Nama file PDF
+        $file_pdf = strtolower(str_replace(' ', '_', $data['title']));
+        // Ukuran kertas dan orientasi
+        $paper = 'A4';
+        $orientation = 'Portrait';
+
+        // Muat tampilan dan render HTML
+        $html = $this->load->view('output/laporan/data', $data, true);
 
         // Panggil fungsi untuk mencetak PDF
         $this->print($html, $file_pdf, $paper, $orientation);

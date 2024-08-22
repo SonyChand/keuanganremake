@@ -143,10 +143,19 @@ function histori($aksi, $oleh, $oleh2, $isi, $waktu, $warna)
     $akses->db->insert('histori_aktivitas', $aktivitasUser);
 }
 
+function tanggal_indonesia_dari_timestamp($timestamp)
+{
+    // Konversi Unix timestamp ke format tanggal YYYY-MM-DD
+    $tanggal = date('Y-m-d', $timestamp);
+
+    // Format tanggal Indonesia
+    return tanggal_indonesia($tanggal);
+}
+
 function tanggal_indonesia($tanggal)
 {
     $bulan = array(
-        1 =>   'Januari',
+        1 => 'Januari',
         'Februari',
         'Maret',
         'April',
@@ -159,9 +168,26 @@ function tanggal_indonesia($tanggal)
         'November',
         'Desember'
     );
+
+    // Pastikan format tanggal valid dan berisi 3 bagian
     $pecahkan = explode('-', $tanggal);
-    return $pecahkan[2] . ' ' . $bulan[(int)$pecahkan[1]] . ' ' . $pecahkan[0];
+    if (count($pecahkan) === 3) {
+        $tahun = (int)$pecahkan[0];
+        $bulan_num = (int)$pecahkan[1];
+        $hari = (int)$pecahkan[2];
+
+        // Validasi bulan dan hari
+        if ($bulan_num >= 1 && $bulan_num <= 12 && $hari >= 1 && $hari <= 31) {
+            return $hari . ' ' . $bulan[$bulan_num] . ' ' . $tahun;
+        } else {
+            return 'Tanggal tidak valid';
+        }
+    } else {
+        return 'Format tanggal tidak valid';
+    }
 }
+
+
 
 function tanggal_indonesia2($tanggal)
 {
@@ -180,8 +206,15 @@ function tanggal_indonesia2($tanggal)
         'Desember'
     );
     $pecahkan = explode('-', $tanggal);
-    return $bulan[(int)$pecahkan[1]] . ' ' . $pecahkan[0];
+
+    if (count($pecahkan) == 2) {
+        return $bulan[(int)$pecahkan[1]] . ' ' . $pecahkan[0];
+    }
+
+    return 'Format Tanggal Tidak Valid';
 }
+
+
 
 function kodeRM($name, $nik)
 {

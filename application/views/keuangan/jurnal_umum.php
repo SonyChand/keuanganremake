@@ -37,77 +37,25 @@
                                 </a>
                             </div>
                             <div class="p-1">
-                                <a class="badge btn-warning" target="_blank" href="<?= base_url('output/data') . $title ?>"><i class="fa fa-download"></i> Download</a>
+                                <a href="#" class="badge btn-warning" data-bs-toggle="modal" data-bs-target="#downloadModal">
+                                    <i class="fa fa-download"></i>
+                                    Download
+                                </a>
                             </div>
                         </div>
                     </div>
-                    <div class="modal fade" id="addRowModal" tabindex="-1">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Tambah <?= $title ?></h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <form method="POST">
-                                    <div class="modal-body">
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <label for="tanggal" class="form-label">Tanggal</label>
-                                                <input type="date" class="form-control" name="tanggal" id="tanggal" required>
-                                                <?= form_error('tanggal', '<small class="text-danger">', '</small>'); ?>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="pengguna" class="form-label">Pengguna</label>
-                                                <select id="pengguna" class="form-select" name="pengguna" required>
-                                                    <option value="" hidden>
-                                                        Pilih Pengguna
-                                                    </option>
-                                                    <?php foreach ($dataMod as $row) : ?>
-                                                        <option value="<?= $row->nama ?>"><?= $row->nama ?></option>
-                                                    <?php endforeach; ?>
-                                                </select>
-                                                <?= form_error('pengguna', '<small class="text-danger">', '</small>'); ?>
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-12">
-                                                <label for="keterangan" class="form-label">Keterangan</label>
-                                                <input type="text" class="form-control" name="keterangan" id="keterangan" required>
-                                                <?= form_error('keterangan', '<small class="text-danger">', '</small>'); ?>
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <label for="debet" class="form-label">Debet</label>
-                                                <input type="number" class="form-control" name="debet" id="debet" step="0.01" required>
-                                                <?= form_error('debet', '<small class="text-danger">', '</small>'); ?>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="kredit" class="form-label">Kredit</label>
-                                                <input type="number" class="form-control" name="kredit" id="kredit" step="0.01" required>
-                                                <?= form_error('kredit', '<small class="text-danger">', '</small>'); ?>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <input type="submit" name="submit<?= $title ?>" class="btn btn-outline-success" value="Tambah">
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div><!-- End Basic Modal-->
-                    <?= $this->session->flashdata('jurnal'); ?>
                     <div class="card-body">
+                        <!-- Tabel Data Jurnal -->
                         <div class="table-responsive">
                             <table id="multi-filter-select" class="display table table-striped table-hover">
                                 <thead>
                                     <tr>
                                         <th>No</th>
                                         <th>Tanggal</th>
-                                        <th>Pengguna</th>
                                         <th>Keterangan</th>
                                         <th>Debet</th>
                                         <th>Kredit</th>
+                                        <th>Ref</th> <!-- Added Ref Column -->
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -115,10 +63,10 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Tanggal</th>
-                                        <th>Pengguna</th>
                                         <th>Keterangan</th>
                                         <th>Debet</th>
                                         <th>Kredit</th>
+                                        <th>Ref</th> <!-- Added Ref Column -->
                                         <th></th>
                                     </tr>
                                 </tfoot>
@@ -128,10 +76,10 @@
                                         <tr>
                                             <td><?= $i++ ?></td>
                                             <td><?= tanggal_indonesia(date('Y-m-d', $row->tanggal)) ?></td>
-                                            <td><?= $row->pengguna_nama ?></td>
                                             <td><?= $row->keterangan ?></td>
-                                            <td class="text-end"><?= number_format($row->debet, 2) ?></td>
-                                            <td class="text-end"><?= number_format($row->kredit, 2) ?></td>
+                                            <td class="text-end"><?= number_format($row->debet, 0, ',', '.') ?></td>
+                                            <td class="text-end"><?= number_format($row->kredit, 0, ',', '.') ?></td>
+                                            <td class="text-center"><?= htmlspecialchars($row->ref) ?></td> <!-- Added Ref Data -->
                                             <td class="text-center">
                                                 <a href="<?= base_url('keuangan/ubahJurnal/' . $row->id) ?>">
                                                     <span class="badge bg-warning"><i class="bi bi-pencil-square me-1"></i> Ubah</span>
@@ -151,3 +99,85 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Tambah Data -->
+<div class="modal fade" id="addRowModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tambah <?= $title ?></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST">
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="tanggal" class="form-label">Tanggal</label>
+                            <input type="date" class="form-control" name="tanggal" id="tanggal" required>
+                            <?= form_error('tanggal', '<small class="text-danger">', '</small>'); ?>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="keterangan" class="form-label">Keterangan</label>
+                            <input type="text" class="form-control" name="keterangan" id="keterangan" required>
+                            <?= form_error('keterangan', '<small class="text-danger">', '</small>'); ?>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="debet" class="form-label">Debet</label>
+                            <input type="number" class="form-control" name="debet" id="debet" step="0.01">
+                            <?= form_error('debet', '<small class="text-danger">', '</small>'); ?>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="kredit" class="form-label">Kredit</label>
+                            <input type="number" class="form-control" name="kredit" id="kredit" step="0.01">
+                            <?= form_error('kredit', '<small class="text-danger">', '</small>'); ?>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="ref" class="form-label">Ref</label>
+                            <input type="text" class="form-control" name="ref" id="ref">
+                            <?= form_error('ref', '<small class="text-danger">', '</small>'); ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" name="submit<?= $title ?>" class="btn btn-outline-success" value="Tambah">
+                </div>
+            </form>
+        </div>
+    </div>
+</div><!-- End Modal Tambah Data -->
+
+<!-- Modal Download -->
+<div class="modal fade" id="downloadModal" tabindex="-1" aria-labelledby="downloadModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="downloadModalLabel">Download <?= $title ?> Report</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="<?= base_url('output/data' . $title) ?>" method="post" target="_blank">
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="start_date" class="form-label">Tanggal Awal</label>
+                            <input type="date" class="form-control" name="start_date" id="start_date" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="end_date" class="form-label">Tanggal Akhir</label>
+                            <input type="date" class="form-control" name="end_date" id="end_date" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Download</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div><!-- End Modal for downloading report -->

@@ -37,10 +37,14 @@
                                 </a>
                             </div>
                             <div class="p-1">
-                                <a class="badge btn-warning" target="_blank" href="<?= base_url('output/data') . $title ?>"><i class="fa fa-download"></i> Download</a>
+                                <a href="#" class="badge btn-warning" data-bs-toggle="modal" data-bs-target="#downloadModal">
+                                    <i class="fa fa-download"></i>
+                                    Download
+                                </a>
                             </div>
                         </div>
                     </div>
+
                     <!-- Modal for adding new record -->
                     <div class="modal fade" id="addRowModal" tabindex="-1">
                         <div class="modal-dialog modal-lg">
@@ -99,7 +103,38 @@
                                 </form>
                             </div>
                         </div>
-                    </div><!-- End Basic Modal-->
+                    </div><!-- End Basic Modal -->
+
+                    <!-- Modal for downloading report -->
+                    <div class="modal fade" id="downloadModal" tabindex="-1" aria-labelledby="downloadModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="downloadModalLabel">Download <?= $title ?> Report</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form action="<?= base_url('output/data' . $title) ?>" method="post" target="_blank">
+                                    <div class="modal-body">
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label for="start_date" class="form-label">Tanggal Awal</label>
+                                                <input type="date" class="form-control" name="start_date" id="start_date" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="end_date" class="form-label">Tanggal Akhir</label>
+                                                <input type="date" class="form-control" name="end_date" id="end_date" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Download</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div><!-- End Modal for downloading report -->
+
                     <?= $this->session->flashdata('pemasukan'); ?>
                     <div class="card-body">
                         <div class="table-responsive">

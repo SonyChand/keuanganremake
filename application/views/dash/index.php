@@ -7,6 +7,7 @@
             </div>
         </div>
         <div class="row">
+            <!-- Santri -->
             <div class="col-sm-6 col-md-3">
                 <div class="card card-stats card-round">
                     <div class="card-body">
@@ -26,6 +27,7 @@
                     </div>
                 </div>
             </div>
+            <!-- Yayasan -->
             <div class="col-sm-6 col-md-3">
                 <div class="card card-stats card-round">
                     <div class="card-body">
@@ -45,6 +47,7 @@
                     </div>
                 </div>
             </div>
+            <!-- Asrama -->
             <div class="col-sm-6 col-md-3">
                 <div class="card card-stats card-round">
                     <div class="card-body">
@@ -64,6 +67,7 @@
                     </div>
                 </div>
             </div>
+            <!-- Pengguna -->
             <div class="col-sm-6 col-md-3">
                 <div class="card card-stats card-round">
                     <div class="card-body">
@@ -77,6 +81,67 @@
                                 <div class="numbers">
                                     <p class="card-category">Pengguna</p>
                                     <h4 class="card-title"><?= $this->db->get_where('pengguna', ['status' => 1])->num_rows(); ?></h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Pemasukan -->
+            <div class="col-sm-6 col-md-3">
+                <div class="card card-stats card-round">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-icon">
+                                <div class="icon-big text-center icon-primary bubble-shadow-small">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                            </div>
+                            <div class="col col-stats ms-3 ms-sm-0">
+                                <div class="numbers">
+                                    <p class="card-category">Total Pemasukan</p>
+                                    <h4 class="card-title">Rp <?= number_format($total_pemasukan, 0, ',', '.'); ?></h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Total Pengeluaran -->
+            <div class="col-sm-6 col-md-3">
+                <div class="card card-stats card-round">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-icon">
+                                <div class="icon-big text-center icon-danger bubble-shadow-small">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                            </div>
+                            <div class="col col-stats ms-3 ms-sm-0">
+                                <div class="numbers">
+                                    <p class="card-category">Total Pengeluaran</p>
+                                    <h4 class="card-title">Rp <?= number_format($total_pengeluaran, 0, ',', '.'); ?></h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Total Transaksi -->
+            <div class="col-sm-6 col-md-3">
+                <div class="card card-stats card-round">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-icon">
+                                <div class="icon-big text-center icon-success bubble-shadow-small">
+                                    <i class="fas fa-calculator"></i>
+                                </div>
+                            </div>
+                            <div class="col col-stats ms-3 ms-sm-0">
+                                <div class="numbers">
+                                    <p class="card-category">Total Transaksi</p>
+                                    <h4 class="card-title"><?= $total_transaksi; ?></h4>
                                 </div>
                             </div>
                         </div>
