@@ -37,7 +37,7 @@
                             </div>
                             <div class="col col-stats ms-3 ms-sm-0">
                                 <div class="numbers">
-                                    <p class="card-category">Yayasan</p>
+                                    <p class="card-category">Ustadz</p>
                                     <a class="btn btn-primary" target="_blank" href="<?= base_url('output/dataYayasan') ?>"><i class="fa fa-download"></i> Download</a>
                                 </div>
                             </div>
