@@ -215,7 +215,7 @@ class Admin extends CI_Controller
 	{
 		$data = [
 			'user' => $this->db->get_where('pengguna', ['email' => $this->session->userdata('email')])->row(),
-			'title' => 'Yayasan',
+			'title' => 'Ustadz',
 			'dataTab' => $this->db->select('ustadz.*, asrama.nama as asrama, pengguna.email, pengguna.image')->join('asrama', 'ustadz.id_asrama = asrama.id', 'LEFT')->join('pengguna', 'ustadz.id_user = pengguna.id', 'LEFT')->get('ustadz')->result(),
 			'dataMod' => $this->db->get_where('pengguna', ['role' => 3, 'image' => 'default'])->result(),
 			'dataMod2' => $this->db->get('asrama')->result()

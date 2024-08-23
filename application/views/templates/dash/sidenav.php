@@ -106,6 +106,12 @@
                             <?php endif; ?>
                             </li>
                         <?php endforeach; ?>
+                        <li class="nav-item">
+                            <a href="<?= base_url('auth/logout') ?>" onclick="return confirm('Apakah anda yakin?')">
+                                <i class="bi fa fa-sign-out-alt"></i>
+                                <p>Logout</p>
+                            </a>
+                        </li>
                 </ul>
             </div>
         </div>

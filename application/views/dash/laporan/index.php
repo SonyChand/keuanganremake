@@ -132,29 +132,11 @@
                             </div>
                             <div class="col col-stats ms-3 ms-sm-0">
                                 <div class="numbers">
-                                    <p class="card-category">Jurnal Umum</p>
-                                    <a class="btn btn-primary" target="_blank" href="<?= base_url('output/dataJurnal') ?>"><i class="fa fa-download"></i> Download</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-3">
-                <div class="card card-stats card-round">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-icon">
-                                <div class="icon-big text-center icon-secondary bubble-shadow-small">
-                                    <i class="far fa-list-alt"></i>
-                                </div>
-                            </div>
-                            <div class="col col-stats ms-3 ms-sm-0">
-                                <div class="numbers">
-                                    <p class="card-category">Neraca Saldo</p>
-                                    <div class="">
-                                        <a class="btn btn-primary" target="_blank" href="<?= base_url('output/dataNeraca') ?>"><i class="fa fa-download"></i> Download</a>
-                                    </div>
+                                    <p class="card-category">Laporan Keuangan</p>
+                                    <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#downloadModal">
+                                        <i class="fa fa-download"></i>
+                                        Download
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -163,5 +145,34 @@
             </div>
         </div>
 
+    </div>
+</div>
+
+<div class="modal fade" id="downloadModal" tabindex="-1" aria-labelledby="downloadModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="downloadModalLabel">Download Laporan Keuangan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="<?= base_url('output/dataLaporan') ?>" method="post" target="_blank">
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="start_date" class="form-label">Tanggal Awal</label>
+                            <input type="date" class="form-control" name="start_date" id="start_date" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="end_date" class="form-label">Tanggal Akhir</label>
+                            <input type="date" class="form-control" name="end_date" id="end_date" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Download</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
