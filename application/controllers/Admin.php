@@ -384,7 +384,7 @@ class Admin extends CI_Controller
 	{
 		$data = [
 			'user' => $this->db->get_where('pengguna', ['email' => $this->session->userdata('email')])->row(),
-			'title' => 'asrama',
+			'title' => 'Asrama',
 			'dataTab' => $this->db->select('asrama.*, ustadz.nama as musyrif')->join('ustadz', 'asrama.id_musyrif = ustadz.id', 'LEFT')->get('asrama')->result(),
 		];
 

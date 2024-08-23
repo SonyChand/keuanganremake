@@ -12,7 +12,7 @@
                     <i class="icon-arrow-right"></i>
                 </li>
                 <li class="nav-item">
-                    <a href="#"><?= ucwords($this->uri->segment(1)) ?></a>
+                    <a href="#">Master</a>
                 </li>
                 <li class="separator">
                     <i class="icon-arrow-right"></i>

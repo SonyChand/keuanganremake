@@ -138,7 +138,7 @@
     <div class="signature">
         <p><?= tanggal_indonesia(date('Y-m-d')) ?><br>
             Kepala Pesantren<br><br><br><br><br>
-            <span>Shelin</span>
+            <span>Teh Shellin</span>
         </p>
     </div>
 </body>
