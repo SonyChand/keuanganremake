@@ -312,7 +312,9 @@ class Output extends CI_Controller
         $data = [
             'user' => $this->db->get_where('pengguna', ['email' => $this->session->userdata('email')])->row(),
             'title' => 'Prediksi Pengeluaran',
-            'prediksi' => $this->predict_expenses()
+            'prediksi' => $this->predict_expenses()['prediksi'],
+            'bulan1' => $this->predict_expenses()['bulan1'],
+            'bulan3' => $this->predict_expenses()['bulan3']
         ];
 
 
@@ -333,33 +335,37 @@ class Output extends CI_Controller
     {
         // Get current month's expenses
         $current_month = date('n'); // current month as an integer
+        $currentMonth = strtotime(date('Y-m-d', strtotime('-1 month'))); // 3 months ago
         $current_month_expenses = $this->db
             ->select_sum('jumlah')
-            ->where('MONTH(tanggal_keluar)', $current_month)
+            ->where('tanggal_keluar >=', $currentMonth)
+            ->where('tanggal_keluar <=', strtotime(date('Y-m-d')))
             ->get('pengeluaran')
             ->row()->jumlah;
 
         // Calculate the average of the last 3 months' expenses
         $last_three_months = strtotime(date('Y-m-d', strtotime('-3 months'))); // 3 months ago
         $last_three_months_expenses = $this->db
-            ->select_sum('jumlah')
+            ->select_avg('jumlah')
             ->where('tanggal_keluar >=', $last_three_months)
             ->where('tanggal_keluar <=', strtotime(date('Y-m-d')))
             ->get('pengeluaran')
             ->result_array();
 
         $jumlah_values = array_column($last_three_months_expenses, 'jumlah');
-        $average_expenses = array_sum($jumlah_values) / count($jumlah_values);
+        $average_expenses = array_sum($jumlah_values);
 
-        // r + (c - r) * 0.2
-        $alpha = 0.2;
+
+
+        // r + (c - r) * 0.4
+        $alpha = 0.4;
         $predicted_expenses = $average_expenses + ($current_month_expenses - $average_expenses) * $alpha;
 
         // Round the predicted value to 2 decimal places
         $predicted_expenses = round($predicted_expenses, 2);
 
         // Return the predicted value
-        return $predicted_expenses;
+        return ['prediksi' => $predicted_expenses, 'bulan1' => $current_month_expenses, 'bulan3' => $average_expenses];
     }
 
 

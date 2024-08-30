@@ -91,12 +91,16 @@
     <table width="100%" class="tabel1">
         <thead>
             <tr>
-                <th style="font-size: x-large;">Prediksi Pengeluaran bulan <?= tanggal_indonesia2(date('Y-m', strtotime('+1 month'))) ?></th>
+                <th colspan="2" style="font-size: x-large;">Prediksi Pengeluaran bulan <?= tanggal_indonesia2(date('Y-m', strtotime('+1 month'))) ?></th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td style="font-size:xx-large;"><?= money($prediksi) ?></td>
+                <td colspan="2" style="font-size:xx-large;"><?= money($prediksi) ?></td>
+            </tr>
+            <tr>
+                <td>Pengeluaran bulan ini: <br> <strong><?= money($bulan1) ?></strong> </td>
+                <td>Pengeluaran Rata-rata 3 bulan sebelumnya: <br> <strong><?= money($bulan3) ?></strong> </td>
             </tr>
         </tbody>
     </table>

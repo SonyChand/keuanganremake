@@ -32,6 +32,9 @@ class Keuangan extends CI_Controller
             ->result_array();
 
         $jumlah_values = array_column($last_three_months_expenses, 'jumlah');
+
+        var_dump($jumlah_values);
+        die;
         $average_expenses = array_sum($jumlah_values) / count($jumlah_values);
 
         // Predict next month's expenses using Exponential Smoothing (alpha = 0.2)
