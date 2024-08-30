@@ -129,6 +129,7 @@
                                         </th>
                                         <th>Nama</th>
                                         <th>Role</th>
+                                        <th>No HP</th>
                                         <th>Jenis Kelamin</th>
                                         <th>Terakhir Login</th>
                                         <th></th>
@@ -142,6 +143,7 @@
                                         </th>
                                         <th>Nama</th>
                                         <th>Role</th>
+                                        <th>No HP</th>
                                         <th>Jenis Kelamin</th>
                                         <th>Terakhir Login</th>
                                         <th></th>
@@ -166,6 +168,7 @@
                                                 }
                                                 ?>
                                             </td>
+                                            <td><?= $row->no_hp ?></td>
                                             <td><?= $row->jenis_kelamin ?></td>
                                             <td><?php if ($row->terakhir_login) {
                                                     echo tanggal_indonesia(date('Y-m-d', $row->terakhir_login));

@@ -189,10 +189,10 @@
                                                 <?php endif; ?>
                                             </td>
                                             <td class="text-center">
-                                                <a href="<?= base_url('admin/ubah') . $title . '/' . $row->id ?>">
+                                                <a href="<?= base_url('admin/ubahYayasan/')  . $row->id ?>">
                                                     <span class="badge bg-warning"><i class="bi bi-pencil-square me-1"></i> Ubah</span>
                                                 </a>
-                                                <a href="<?= base_url('admin/hapus') . $title . '/' . $row->id ?>" onclick="return confirm('Apakah anda yakin')">
+                                                <a href="<?= base_url('admin/hapusYayasan/') . $row->id ?>" onclick="return confirm('Apakah anda yakin')">
                                                     <span class="badge bg-danger"><i class="bi bi-trash me-1"></i> Hapus</span>
                                                 </a>
                                             </td>

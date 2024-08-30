@@ -351,7 +351,7 @@ class Output extends CI_Controller
         $jumlah_values = array_column($last_three_months_expenses, 'jumlah');
         $average_expenses = array_sum($jumlah_values) / count($jumlah_values);
 
-        // Predict next month's expenses using Exponential Smoothing (alpha = 0.2)
+        // r + (c - r) * 0.2
         $alpha = 0.2;
         $predicted_expenses = $average_expenses + ($current_month_expenses - $average_expenses) * $alpha;
 
@@ -655,8 +655,7 @@ class Output extends CI_Controller
         });
 
         // Hitung saldo awal dan akhir untuk setiap transaksi
-        $saldoAwal = $this->db->select_sum('jumlah')->get('pemasukan')->row()->jumlah -
-            $this->db->select_sum('jumlah')->get('pengeluaran')->row()->jumlah;
+        $saldoAwal = 0;
 
         foreach ($data['dataTransaksi'] as &$transaksi) {
             $transaksi['saldo_awal'] = $saldoAwal;
